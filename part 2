@@ -1,0 +1,139 @@
+5. The system must be able to satisfy the following reports that print to screen:
+
+a) For each type of plane, list the type code (C8), the type description (C30), the capacity (D3), and the flight range (D4).
+
+COLUMN pln_typecode HEADING "Type Code"
+COLUMN pln_type HEADING "Type Description"
+COLUMN pln_cap HEADING "Capacity"
+COLUMN f_range HEADING "Flight Range"
+select pln_typecode, pln_type, pln_cap, f_range 
+from Plane;
+
+b) For each aircraft, list the serial number (C12) and the code and description of the type of plane.
+
+COLUMN ac_sno HEADING "Aircraft Serial Number"
+COLUMN pln_typecode HEADING "Type Code"
+COLUMN pln_type HEADING "Plane Description"
+select a.ac_sno,p.pln_typecode,p.Pln_Type 
+from aircraft a,
+Plane p
+where a.pln_typecode=p.pln_typecode;
+
+c) For each pilot, list the pilot number (D5) and the name of the pilot (C30). In addition, list the type code and description of each of the types of planes on which the pilot is certified as well as the flight number (D3), date, and aircraft serial number for all flights on which the pilot is currently scheduled.
+
+COLUMN p_id HEADING "Pilot Number"
+COLUMN p_name HEADING "Pilot Name"
+COLUMN pln_typecode HEADING "Type Code"
+COLUMN pln_type HEADING "Type Description"
+COLUMN f_sno HEADING "Flight Number"
+COLUMN flight_scheduledate HEADING "Date"
+COLUMN ac_sno HEADING "Aircraft Serial Number"
+select 
+p.p_id, 
+p_name,
+pln.pln_typecode,pln.pln_type,f.f_sno,fs.flight_scheduledate,fs.ac_sno 
+from flight_schedule fs, 
+pilot p,
+Pilot_Certificate_Details pcd,
+plane pln,
+Flight f
+where fs.p_id=p.p_id
+and pcd.p_id = p.p_id
+and pcd.pln_typecode = pln.pln_typecode
+and fs.f_sno = f.f_sno;
+
+
+d) For each city served, list the code for the city (C3), then name of the city (C30), the name of the state (C2), and a description of the airport (C30). Should be in city name order.
+
+COLUMN c_code HEADING "City Code"
+COLUMN c_name HEADING "City Name"
+COLUMN state HEADING "State"
+COLUMN airport_name HEADING "Airport Description"
+select c_code,
+c_name,
+state,
+airport_name
+from City
+order by c_name;
+
+e) For each aircraft, list the serial number, year it was manufactured, the last date it was serviced and its next service date.
+
+COLUMN ac_sno HEADING "Aircraft Serial Number"
+COLUMN ac_manufactureyear HEADING "Aircraft Manufacture Year"
+COLUMN ac_lastservicedate HEADING "Aircraft Last Service Date"
+COLUMN ac_nextservicedate HEADING "Aircraft Next Service Date"
+select ac_sno,ac_manufactureyear,ac_lastservicedate,ac_nextservicedate
+from aircraft ;
+
+6. The system must satisfy the following queries (the user is prompted to give the flight number or date to get the information requested):
+ a) For a given point of origination and destination, list all flights scheduled that still have seats available and include the number of seats available and the date. Note: should be in alphabetical order of origination city.
+
+SELECT FS.F_SNO, (P.PLN_CAP - R.NUMOF_TICKETS) AS AVAILABLE_TICKETS, FS.flight_scheduledate
+FROM flight F, flight_schedule FS, CITY OC, CITY DC, aircraft AC, PLANE P, reservation R 
+WHERE OC.C_NAME = &ORIGINCITYNAME
+AND DC.C_NAME = &DESTINATIONCITYNAME
+AND F.F_ORIGINCITYCODE = OC.C_CODE
+AND F.F_DESTINATIONCITYCODE = DC.C_CODE
+AND F.F_SNO = FS.F_SNO
+AND FS.AC_SNO = AC.AC_SNO
+AND AC.pln_typecode = P.pln_typecode 
+AND F.F_SNO = R.F_SNO
+AND P.PLN_CAP - R.NUMOF_TICKETS > 0
+ORDER BY F.F_ORIGINCITYCODE;
+
+Enter value for origincityname: 'Jackson'
+old   3: WHERE OC.C_NAME = &ORIGINCITYNAME
+new   3: WHERE OC.C_NAME = 'Jackson'
+Enter value for destinationcityname: 'Butte'
+old   4: AND DC.C_NAME = &DESTINATIONCITYNAME
+new   4: AND DC.C_NAME = 'Butte'
+
+b) For a given date, list all of the pilots scheduled for flight including the pilot number (ID), pilot name and the serial number of the aircraft and plane type description.
+
+COLUMN p_id HEADING "Pilot Number"
+COLUMN p_name HEADING "Pilot Name"
+COLUMN ac_sno HEADING "Aircraft Serial Number"
+COLUMN pln_type HEADING "Type Description"
+COLUMN flight_scheduledate HEADING "Date"
+select 
+p.p_id, 
+p_name,
+fs.ac_sno,
+pln.pln_type,
+fs.flight_scheduledate
+from flight_schedule fs,
+pilot p,
+aircraft a,
+plane pln
+where fs.p_id=p.p_id
+and fs.ac_sno=a.ac_sno
+and a.pln_typecode=pln.pln_typecode
+and fs.flight_scheduledate = '&date’;
+
+Enter value for date: 04-AUG-19
+old  14: and fs.flight_scheduledate = '&date'
+new  14: and fs.flight_scheduledate = '04-AUG-19'
+
+
+c) For a given flight, list the flight number, the code and name of the city of origination, the time of departure, the code and name of the destination city, and the time of arrival.
+
+COLUMN f_sno HEADING "Flight Serial Number"
+COLUMN f_origincitycode HEADING "Flight Origination City Code"
+COLUMN f_depttime HEADING "Flight Departure Time"
+COLUMN f_destinationcitycode HEADING "Flight Destination City Code"
+COLUMN ff_arrtime HEADING "Flight Arrival Time"
+select f.f_sno,
+f.f_origincitycode,
+(select c_name from city where c_code = f.f_origincitycode) "Origination City Name",
+f.f_depttime,
+f.f_destinationcitycode,
+(select c_name from city where c_code = f.f_destinationcitycode) "Destination City Name",
+f.f_arrtime
+from flight f
+where f.f_sno = &fsno;
+
+Enter value for fsno: 549
+old   9: where f.f_sno = &fsno
+new   9: where f.f_sno = 549
+
+
