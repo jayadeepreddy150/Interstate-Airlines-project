@@ -1,0 +1,275 @@
+Creating the table for plane:
+CREATE TABLE plane(
+pln_typecode char(8) primary key,
+pln_type char(30) NOT NULL,
+pln_cap Number(3) NOT NULL,
+f_range Number(4) NOT NULL
+);
+
+Inserting Values Into the table plane:
+Insert into plane(pln_typecode, pln_type, pln_cap, f_range)
+values('380', 'Airbus',853,8477);
+
+Insert into plane(pln_typecode, pln_type, pln_cap, f_range)
+values('340', 'Airbus',475, 7802);
+
+Insert into plane(pln_typecode, pln_type, pln_cap, f_range)
+values('777', 'Boeing',440, 7700);
+
+Insert into plane(pln_typecode, pln_type, pln_cap, f_range)
+values('747', 'Airbus',416,7260);
+
+Insert into plane(pln_typecode, pln_type, pln_cap, f_range)
+values('330', 'Airbus',440,7235);
+
+SELECT * FROM plane;
+
+CREATE TABLE aircraft(
+ac_sno char(12) primary key,
+ac_manufactureyear number(10) NOT NULL,
+ac_lastservicedate Date NOT NULL,
+ac_nextservicedate Date NOT NULL,
+pln_typecode char(8) NOT NULL,
+Foreign key (pln_typecode) references plane(pln_Typecode)
+);
+
+Inserting Values Into The Table aircraft:
+Insert into aircraft(ac_sno, ac_manufactureyear,ac_lastservicedate,ac_nextservicedate,pln_typecode)
+values('3789', 2005, Date'2019-02-02', date'2020-02-03','380');
+
+Insert into aircraft(ac_sno, ac_manufactureyear,ac_lastservicedate,ac_nextservicedate,pln_typecode)
+values('3217', 2006, Date'2019-05-02', date'2020-05-03','340');
+
+Insert into aircraft(ac_sno, ac_manufactureyear,ac_lastservicedate,ac_nextservicedate,pln_typecode)
+values('1256', 2007, Date'2019-07-02', date'2020-08-03','777');
+
+Insert into aircraft(ac_sno, ac_manufactureyear,ac_lastservicedate,ac_nextservicedate,pln_typecode)
+values('6754', 2009, Date'2019-02-02', date'2020-02-03','747');
+
+Insert into aircraft(ac_sno, ac_manufactureyear,ac_lastservicedate,ac_nextservicedate,pln_typecode)
+values('8750', 2004, Date'2019-01-02', date'2020-05-03','330');
+
+select * from aircraft;
+
+
+Creating the Table For pilot:
+
+CREATE TABLE pilot(
+p_id Number(5) primary key,
+p_name char(30) NOT NULL,
+p_ssn number(10) NOT NULL,
+P_db Date NOT NULL,
+p_pno number(10) NOT NULL
+);
+
+Inserting Values into the Table Pilot:
+ INSERT INTO pilot(p_id, p_name, p_ssn, p_db, p_pno)
+values(38601, 'Spray', 596320486, date'1992-02-17', 2233479856);
+
+INSERT INTO pilot(p_id, p_name, p_ssn, p_db, p_pno)
+values(09432, 'Harry', 348906754, date'1991-05-25', 8474645352);
+
+INSERT INTO pilot(p_id, p_name, p_ssn, p_db, p_pno)
+values(87635, 'Garry', 234987456, date'1989-08-08', 2278545629);
+
+INSERT INTO pilot(p_id, p_name, p_ssn, p_db, p_pno)
+values(10543, 'Adam', 287612097, date'96-09-27', 2981965357);
+
+INSERT INTO pilot(p_id, p_name, p_ssn, p_db, p_pno)
+values(98321, 'Paul', 192340975, date'1994-02-02', 6541239832);
+
+SELECT * FROM pilot;
+
+CREATE TABLE pilot_certificate_details(
+p_id number(10) NOT NULL,
+pln_typecode char(8) NOT NULL,
+p_cdate Date NOT NULL,
+primary key (p_id, pln_typecode),
+foreign key(p_id) references pilot(p_id),
+foreign key(pln_typecode) references plane(pln_typecode)
+);
+
+INSERT INTO pilot_certificate_details(p_id, pln_typecode, p_cdate)
+values(38601, '380', date'2017-04-07');
+
+INSERT INTO pilot_certificate_details(p_id, pln_typecode, p_cdate)
+values(9432, '340', date'2018-07-09');
+
+INSERT INTO pilot_certificate_details(p_id, pln_typecode, p_cdate)
+values(87635, '777', date'2017-08-01');
+
+
+INSERT INTO pilot_certificate_details(p_id, pln_typecode, p_cdate)
+values(10543, '747', date'2017-02-01');
+
+INSERT INTO pilot_certificate_details(p_id, pln_typecode, p_cdate)
+values(98321, '330', date'2018-08-01');
+
+SELECT * FROM pilot_certificate_details;
+
+
+Creating table for city:
+CREATE TABLE city(
+c_code varchar2(3) primary key,
+c_name varchar2(30) NOT NULL,
+state varchar2(2) NOT NULL,
+airport_name varchar2(30) NOT NULL
+);
+
+Inserting values into Table city:
+
+INSERT INTO city(c_code, c_name, state, airport_name)
+VALUES('HKS','Jackson', 'MS','Hawkins Field Airport'); 
+
+INSERT INTO city(c_code, c_name, state, airport_name)
+VALUES('BTM','Butte', 'MT','Bert Mooney Airport');
+
+INSERT INTO city(c_code, c_name, state, airport_name)
+VALUES('TTN','Trenton', 'NJ','Trenton Mercer Airport');
+
+INSERT INTO city(c_code, c_name, state, airport_name)
+VALUES('DAY','Dayton', 'OH','Dayton International Airport');
+
+INSERT INTO city(c_code, c_name, state, airport_name)
+VALUES('DAL','Dallas', 'TX','Dallas Love Field');
+
+SELECT * FROM city;
+
+Creating Table for flight:
+
+CREATE TABLE flight(
+f_sno Number(3) primary key,
+f_origincitycode varchar2(30) NOT NULL,
+f_destinationcitycode varchar2(30) NOT NULL,
+f_depttime varchar2(30) NOT NULL,
+f_arrtime varchar2(30) NOT NULL,
+foreign key (f_origincitycode) references city(c_code),
+foreign key (f_destinationcitycode) references city(c_code)
+);
+
+Inserting The Values To Table flight:
+
+INSERT INTO flight(f_sno, f_origincitycode, f_destinationcitycode, f_depttime, f_arrtime)
+VALUES(549,'HKS','BTM','07:15:45','10:35:45');
+
+INSERT INTO flight(f_sno, f_origincitycode, f_destinationcitycode, f_depttime, f_arrtime)
+VALUES(874,'TTN','BTM','09:10:28','12:35:26');
+
+INSERT INTO flight(f_sno, f_origincitycode, f_destinationcitycode, f_depttime, f_arrtime)
+VALUES(987,'BTM','DAL','11:15:45','13:56:43');
+
+INSERT INTO flight(f_sno, f_origincitycode, f_destinationcitycode, f_depttime, f_arrtime)
+VALUES(190,'TTN','DAY','11:50:45','13:35:53');
+
+INSERT INTO flight(f_sno, f_origincitycode, f_destinationcitycode, f_depttime, f_arrtime)
+VALUES(293,'DAY','DAL','07:15:45','10:35:59');
+
+INSERT INTO flight(f_sno, f_origincitycode, f_destinationcitycode, f_depttime, f_arrtime)
+ VALUES(581,'HKS','BTM','09:15:45','12:35:45');
+
+Result After Inserting the Values To The Table flight:
+SELECT * FROM flight;
+
+Creating table for flight_schedule:
+CREATE TABLE flight_schedule(
+f_sno Number(3) NOT NULL,
+flight_scheduledate date NOT NULL,
+ac_sno char(12) NOT NULL,
+p_id Number(10) NOT NULL,
+primary key (f_sno, flight_scheduledate),
+foreign key (f_sno) references flight(f_sno),
+foreign key (ac_sno) references aircraft(ac_sno),
+foreign key (p_id) references pilot(p_id)
+);
+
+Inserting Values To The Table flight_schedule:
+
+INSERT INTO flight_schedule(f_sno, flight_scheduledate, ac_sno, p_id)
+VALUES(549,Date'2019-08-04','3789',38601);
+
+INSERT INTO flight_schedule(f_sno, flight_scheduledate, ac_sno, p_id)
+VALUES(874,Date'2019-09-24','3217',9432);
+
+INSERT INTO flight_schedule(f_sno, flight_scheduledate, ac_sno, p_id)
+VALUES(987,Date'2019-06-14','1256',87635);
+
+INSERT INTO flight_schedule(f_sno, flight_scheduledate, ac_sno, p_id)
+VALUES(190,Date'2019-10-09','6754',10543);
+
+INSERT INTO flight_schedule(f_sno, flight_scheduledate, ac_sno, p_id)
+VALUES(293,Date'2019-07-06','8750',98321);
+
+INSERT INTO flight_schedule(f_sno, flight_scheduledate, ac_sno, p_id)
+ VALUES(581,Date'2019-10-12','3789',38601);
+
+SELECT * FROM flight_schedule;
+
+Creating table for passenger:
+CREATE TABLE passenger(
+pass_id number(10) primary key,
+pass_firstname char(40) NOT NULL,
+pass_lastname char(40) NOT NULL,
+pass_cnum number(10) NOT NULL,
+pass_add char(30) NOT NULL,
+pass_city char(50) NOT NULL,
+pass_state char(40) NOT NULL,
+pass_zip char(10) NOT NULL,
+pass_email char(30) NULL,
+pass_db Date NOT NULL
+);
+
+Inserting The Values Into The Table passenger:
+INSERT INTO passenger(pass_id,pass_firstname,pass_lastname,pass_cnum,pass_add,pass_city,pass_state,pass_zip,pass_email,pass_db)
+VALUES(134789,'Haris','Kaka','9912972913','203 Thomson Road', 'Chicago', 'IL','60089','harisnawaz3@gmail.com', Date'1996-06-02');
+
+INSERT INTO passenger(pass_id,pass_firstname,pass_lastname,pass_cnum,pass_add,pass_city,pass_state,pass_zip,pass_email,pass_db)
+VALUES(346890,'Swapnika','Grandhi','9910987654','West 42nd Street','Newyork','NYK','10168','swappu17@gmail.com', Date'1997-08-02');
+
+INSERT INTO passenger(pass_id,pass_firstname,pass_lastname,pass_cnum,pass_add,pass_city,pass_state,pass_zip,pass_email,pass_db)
+VALUES(124678,'Jayadeep','Karri','9010448260','1807 Seven Pines Road','Springfield','SPG','62704','jayadeep17@gmail.com', Date'1996-11-17');
+
+
+INSERT INTO passenger(pass_id,pass_firstname,pass_lastname,pass_cnum,pass_add,pass_city,pass_state,pass_zip,pass_email,pass_db)
+VALUES(123568,'Varun','Bhogavalli','9912309867','South 38th Street','Newyork','NYK','10123','', Date'1996-10-29');
+
+INSERT INTO passenger(pass_id,pass_firstname,pass_lastname,pass_cnum,pass_add,pass_city,pass_state,pass_zip,pass_email,pass_db)
+VALUES(093245,'Srikanth','Chaganti','8096549999','East 13th Street','Newyork','NYK','10065','', Date'1996-10-29');
+
+SELECT * FROM passengers;
+
+Creating Table for reservation:
+
+CREATE TABLE reservation(
+f_sno Number(3) NOT NULL,
+flight_scheduledate Date NOT NULL,
+pass_id Number(10) NOT NULL,
+numof_tickets number(4) NOT NULL,
+primary key (f_sno, flight_scheduledate, pass_id),
+foreign key (f_sno, flight_scheduledate) references flight_schedule(f_sno, flight_scheduledate),
+foreign key (pass_id) references passenger (pass_id)
+);
+
+Inserting Values Into The Table reservation:
+
+INSERT INTO reservation(f_sno,flight_scheduledate,pass_id,numof_tickets)
+VALUES(549, Date'2019-08-04',134789,4);
+
+INSERT INTO reservation(f_sno,flight_scheduledate,pass_id,numof_tickets)
+VALUES(874, Date'2019-09-24',346890,3);
+
+INSERT INTO reservation(f_sno,flight_scheduledate,pass_id,numof_tickets)
+VALUES(987, Date'2019-06-14',124678,2);
+
+INSERT INTO reservation(f_sno,flight_scheduledate,pass_id,numof_tickets)
+VALUES(190, Date'2019-10-09',123568,1);
+
+INSERT INTO reservation(f_sno,flight_scheduledate,pass_id,numof_tickets)
+VALUES(293, Date'2019-07-06',93245,2);
+INSERT INTO reservation(f_sno,flight_scheduledate,pass_id,numof_tickets) 
+VALUES(581, Date'2019-10-12',134789,1);
+
+Result After Inserting the Values To Table reservation:
+
+SELECT * FROM reservation;
+
+
